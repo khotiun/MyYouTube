@@ -1,6 +1,5 @@
 package com.khotiun.myyoutube.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.khotiun.myyoutube.ActivityHome;
 import com.khotiun.myyoutube.R;
 
 public class ActivitySplash extends AppCompatActivity {
@@ -46,6 +44,7 @@ public class ActivitySplash extends AppCompatActivity {
             super.onPostExecute(aVoid);
             Intent intent = new Intent(getApplicationContext(), ActivityHome.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.open_next, R.anim.close_main);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.khotiun.myyoutube;
+package com.khotiun.myyoutube.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.khotiun.myyoutube.R;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -23,7 +24,7 @@ public class ActivityHome extends AppCompatActivity {
     private String[] mChannelId;
     private String[] mVideoTypes;
 
-    private int mSelectedDrawerItem = 0;
+    private int mSelectedDrawerItem = 0;//пункт меню по умолчанию
 
     private FrameLayout mLayoutList;
 
@@ -39,9 +40,9 @@ public class ActivityHome extends AppCompatActivity {
         mChannelNames = getResources().getStringArray(R.array.channel_names);
         mChannelId = getResources().getStringArray(R.array.channel_id);
         mVideoTypes = getResources().getStringArray(R.array.video_types);
-
+        //количество items в drawer
         PrimaryDrawerItem[] primaryDrawerItems = new PrimaryDrawerItem[mChannelId.length];
-
+        //создание пункта меню для каждого канала или плэйлиста
         for (int i = 0; i < mChannelId.length; i++) {
             primaryDrawerItems[i] = new PrimaryDrawerItem()
                     .withName(mChannelNames[i])
@@ -49,7 +50,7 @@ public class ActivityHome extends AppCompatActivity {
                     .withSelectable(false);
         }
 
-        AccountHeader accountHeader = new AccountHeaderBuilder()
+        AccountHeader accountHeader = new AccountHeaderBuilder()//шапка панели навигации
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .build();
@@ -57,17 +58,18 @@ public class ActivityHome extends AppCompatActivity {
         mDrawer = new DrawerBuilder(this)
                 .withActivity(ActivityHome.this)
                 .withAccountHeader(accountHeader)
-                .withDisplayBelowStatusBar(true)
+                .withDisplayBelowStatusBar(true)//панель навигации под статус баром
                 .withToolbar(mToolbar)
-                .withActionBarDrawerToggleAnimated(true)
-                .withSavedInstance(savedInstanceState)
-                .addDrawerItems(primaryDrawerItems)
+                .withActionBarDrawerToggleAnimated(true)//анимация кнопки на тул баре
+                .withSavedInstance(savedInstanceState)//сохранение состояния
+                .addDrawerItems(primaryDrawerItems)//пункты меню
                 .addStickyDrawerItems(
-                        new SecondaryDrawerItem()
+                        new SecondaryDrawerItem()//секцция для второстепенного меню
                         .withName(getString(R.string.about))
-                        .withIdentifier(mChannelId.length - 1)
-                        .withSelectable(false)
+                        .withIdentifier(mChannelId.length - 1)//id
+                        .withSelectable(false)//свойство выделение при нажатии сбрасываем
                 )
+                //слушатель для нажатия пунктов списка
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -75,7 +77,7 @@ public class ActivityHome extends AppCompatActivity {
                     }
                 })
                 .withSavedInstance(savedInstanceState)
-                .withShowDrawerOnFirstLaunch(true)
+                .withShowDrawerOnFirstLaunch(true)//показ навигации при первом запуске приложения
                 .build();
     }
 }

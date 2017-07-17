@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/window_background_color">
+
+    <LinearLayout
+        android:id="@+id/lytRetry"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/lblAlert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_internet_connection"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/title"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/raisedRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/accent_color"
+            android:text="@string/retry"
+            android:theme="@style/RaisedButtonStyle"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/lblNoResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_result"
+        android:textColor="@color/text_and_icon_color"
+        android:textSize="@dimen/subhead"
+        android:visibility="gone"/>
+
+    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+        android:id="@+id/prgLoading"
+        android:layout_width="@dimen/circleprogressbar_width"
+        android:layout_height="@dimen/circleprogressbar_height"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        app:mlpb_enable_circle_background="true"/>
+
+    <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
+        android:id="@+id/ultimate_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.marshalchen.ultimaterecyclerview.UltimateRecyclerView>
+
+</RelativeLayout>

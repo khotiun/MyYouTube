@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MyYouTube</string>
-    <string name="youtube_apikey"></string>
-    <string name="googleplay_url"></string>
+    <string name="youtube_apikey">AIzaSyD5C9OsF2IMaoq1mLspwJVz98_m2wor2Ck</string>
+    <string name="googleplay_url">https://play.google.com/store/apps/details?id=com.khotiun.myyoutube</string>
     <string name="banner_ad_id"></string>
     <string name="interstitial_ad_id"></string>
 
