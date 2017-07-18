@@ -25,14 +25,14 @@ import java.util.HashMap;
 /**
  * Created by hotun on 17.07.2017.
  */
-
+//класс который получает данные от volley и формирует список
 public class AdapterList extends UltimateViewAdapter<RecyclerView.ViewHolder> {
 
     private final ArrayList<HashMap<String, String>> DATA;
-    private final ImageLoader imageLoader;
-    private Interpolator interpolator = new LinearInterpolator();
-    private int lastPosition = 5;
-    private final int ANIMATION_DURATION = 300;
+    private final ImageLoader imageLoader;//обьект для загрузки изображений в фоновом режиме
+    private Interpolator interpolator = new LinearInterpolator();//для анимациии элементов
+    private int lastPosition = 5;//переменная для последней позиции
+    private final int ANIMATION_DURATION = 300;//продолжительность анимации по умолчанию
 
     public AdapterList(Context context, ArrayList<HashMap<String, String>> list) {
         imageLoader = MySingleton.getInstance(context).getImageLoader();
@@ -62,7 +62,7 @@ public class AdapterList extends UltimateViewAdapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+        //проверяется наличие кастомного хедера и в зависимости от этого определяется позиция элементов в списке
         if (position < getItemCount() && (customHeaderView != null ? position <= DATA.size() :
                 position < DATA.size()) && (customHeaderView == null || position > 0)) {
             HashMap<String, String> item;
@@ -72,7 +72,7 @@ public class AdapterList extends UltimateViewAdapter<RecyclerView.ViewHolder> {
             ((ViewHolder) holder).txtDuration.setText(item.get(Utils.KEY_DURATION));
             ((ViewHolder) holder).txtPublished.setText(item.get(Utils.KEY_PUBLISHEDAT));
 
-            // Set image to imageview
+            // установка изображения полученного от загрузчика или пустой картинки при его отсутствии
             imageLoader.get(item.get((Utils.KEY_URL_THUMBNAILS)),
                     ImageLoader.getImageListener(((ViewHolder) holder).imgThumbnail,
                             R.mipmap.empty_photo, R.mipmap.empty_photo));
@@ -80,7 +80,7 @@ public class AdapterList extends UltimateViewAdapter<RecyclerView.ViewHolder> {
 
         boolean isFirstOnly = true;
         if (!isFirstOnly || position > lastPosition) {
-            // Add animation to the item
+            // анимация добавления новых элементов в списке
             for (Animator anim : getAdapterAnimations(holder.itemView,
                     AdapterAnimationType.SlideInLeft)) {
                 anim.setDuration(ANIMATION_DURATION).start();

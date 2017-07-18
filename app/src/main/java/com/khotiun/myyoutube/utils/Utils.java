@@ -17,7 +17,7 @@ import java.util.Date;
 /**
  * Created by hotun on 17.07.2017.
  */
-
+//класс используется библиотекой volley для построения сетевых запросов
 public class Utils {
     public static final String API_YOUTUBE  = "https://www.googleapis.com/youtube/v3/";
 
@@ -66,7 +66,7 @@ public class Utils {
     public static final String TAG_VIDEO_TYPE  = "video_type";
 
 
-    // Method to check admob visibility
+    // метод для проверки видимости банера
     public static boolean admobVisibility(AdView ad, boolean isInDebugMode){
         if(isInDebugMode) {
             ad.setVisibility(View.VISIBLE);
@@ -77,13 +77,13 @@ public class Utils {
         }
     }
 
-
+    //метод отображения SnackBar, будет оповещать о проблемах с интернетом
     public static void showSnackBar(Activity activity, String message){
         new SnackBar.Builder(activity)
                 .withMessage(message)
                 .show();
     }
-
+    //метод для преобразования даты в строку
     public static String formatPublishedDate(Activity activity, String publishedDate){
         Date result = new Date();
         DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -95,12 +95,12 @@ public class Utils {
 
         return getTimeAgo(result, activity);
     }
-
+    //метод для получения текущей даты
     public static Date currentDate() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTime();
     }
-
+    //метод для отображения строки, показывающей сколько времени прошло с момента создания видео
     public static String getTimeAgo(Date date, Context ctx) {
 
         if(date == null) {
@@ -195,12 +195,12 @@ public class Utils {
 
         return timeAgo + " " + ctx.getResources().getString(R.string.date_util_suffix);
     }
-
+    //метод получающий время с момента публикации в минутах
     private static int getTimeDistanceInMinutes(long time) {
         long timeDistance = currentDate().getTime() - time;
         return Math.round((Math.abs(timeDistance) / 1000) / 60);
     }
-
+    //конвертирует время из строки
     public static String getTimeFromString(String duration) {
         String time = "";
         boolean hourexists = false, minutesexists = false, secondsexists = false;
