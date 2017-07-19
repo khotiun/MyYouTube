@@ -47,7 +47,7 @@ public class AdapterList extends UltimateViewAdapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_video_list, parent, false);
-        return null;
+        return new ViewHolder(v);
     }
 
     @Override

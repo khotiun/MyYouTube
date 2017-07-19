@@ -1,4 +1,4 @@
-package com.khotiun.myyoutube.Activities;
+package com.khotiun.myyoutube.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
