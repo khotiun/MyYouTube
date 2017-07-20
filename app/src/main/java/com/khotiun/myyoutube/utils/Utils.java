@@ -2,6 +2,7 @@ package com.khotiun.myyoutube.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 
 import com.github.mrengineer13.snackbar.SnackBar;
@@ -64,6 +65,28 @@ public class Utils {
 
     public static final String TAG_CHANNEL_ID  = "channel_id";
     public static final String TAG_VIDEO_TYPE  = "video_type";
+
+    public static final String ARG_TRIGGER = "trigger";//аргумент для межстраничных банеров
+    public static final int ARG_TRIGGER_VALUE = 3;//межстраничное обьявление будет отображаться после каждой 33-й смены видео или открытии нового плейлиста
+    public static final boolean IS_ADMOB_VISIBLE = true;//параметр видимости рекламных банеров
+    public static final boolean IS_ADMOB_IN_DEBUG = true;//true-если приложение еще в процессе разработки, false-если готовы опубликовать приложение
+    public static final String ARG_ADMOB_PREFERENCE = "admobPreference";
+    //saveIntPreferences - сохранение целочисленного значения в шаред преференцес, служит для сохранения показов межстраничного банера
+    public static void saveIntPreferences(Context ctx, String key, String param, int value) {
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(key, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(param, value);
+        editor.apply();//вызывается чтобы изминения вступили в силу
+    }
+    //метод для загрузки значения из SharedPreferences, извлекается значение счетчиков показов
+    public static int loadIntPreferences(Context ctx, String key, String param) {
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(key, Context.MODE_PRIVATE);
+        if (key.equals(ARG_ADMOB_PREFERENCE)) {
+            return sharedPreferences.getInt(param, 1);
+        } else {
+            return sharedPreferences.getInt(param, 1000);
+        }
+    }
 
 
     // метод для проверки видимости банера

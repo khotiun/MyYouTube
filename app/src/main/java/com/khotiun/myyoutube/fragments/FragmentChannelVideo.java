@@ -1,7 +1,7 @@
 package com.khotiun.myyoutube.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -20,6 +20,10 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.khotiun.myyoutube.R;
 import com.khotiun.myyoutube.adapter.AdapterList;
 import com.khotiun.myyoutube.utils.MySingleton;
@@ -43,11 +47,15 @@ public class FragmentChannelVideo extends Fragment implements View.OnClickListen
 
     private static final String TAG = FragmentChannelVideo.class.getSimpleName();
     private static final String TAGS = "URL";
+    private static final String TEST_DEVICE_ID = "D48E4373C397DC81A5C2CE6AF8D407F6";
 
     private TextView mLblNoResult;
     private LinearLayout mLytRetry;
     private CircleProgressBar mPrgLoading;
     private UltimateRecyclerView mUltimateRecyclerView;
+
+    private AdView adView;
+    private boolean isAdmobVisible;
 
 
     private int mVideoType;
@@ -94,6 +102,12 @@ public class FragmentChannelVideo extends Fragment implements View.OnClickListen
         mLytRetry = (LinearLayout) view.findViewById(R.id.lytRetry);
         mPrgLoading = (CircleProgressBar) view.findViewById(R.id.prgLoading);
         AppCompatButton btnRetry = (AppCompatButton) view.findViewById(R.id.raisedRetry);
+
+        adView = (AdView) view.findViewById(R.id.adView);
+        //isAdmobVisible - получает и хранит видимость рекламных банеров admob
+        isAdmobVisible = Utils.admobVisibility(adView, Utils.IS_ADMOB_VISIBLE);
+
+        new SyncShowAd(adView).execute();
 
         btnRetry.setOnClickListener(this);//установка слушателя повтор подключения при отсутствии сети
         mPrgLoading.setColorSchemeResources(R.color.accent_color);//задаем цвет прогресс бара
@@ -533,6 +547,95 @@ public class FragmentChannelVideo extends Fragment implements View.OnClickListen
                 break;
             default:
                 break;
+        }
+    }
+    //класс для загрузки и отображения рекламных банеров п приложении, будет происходить в фоновом режиме
+    public class SyncShowAd extends AsyncTask<Void, Void, Void> {
+
+        AdView ad;
+        AdRequest adRequest, interstitialAdRequest;
+        InterstitialAd interstitialAd;
+        int interstitialTrigger;
+
+        public SyncShowAd(AdView ad) {
+            this.ad = ad;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //здесь будет реализация создания отправки запроса на загрузку рекламных банеров
+            if (isAdmobVisible) {
+                if (Utils.IS_ADMOB_IN_DEBUG) {//проверяем включена ли видимость рекламных блоков
+                   //если реклама включена создаем запрос на загрузку рекламного блока
+                    adRequest = new AdRequest.Builder()//загружается стандартный рекламный блок
+                            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)//тестирование рекламного банера на эмуляторе
+                            .addTestDevice(TEST_DEVICE_ID)//банер запрашивается в тестовом режиме
+                            .build();
+                } else {
+                    //иначе стандартный запрос
+                    adRequest = new AdRequest.Builder().build();
+                }
+                //блок показа межстраничных банеров
+                interstitialAd = new InterstitialAd(getActivity());
+                //создаем его представление, setAdUnitId - устанавливает идентификатор банера
+                interstitialAd.setAdUnitId(getActivity().getResources().getString(R.string.interstitial_ad_id));
+                //инициализируем переменную и передаем туда значени извлеченное методом loadIntPreferences
+                interstitialTrigger = Utils.loadIntPreferences(getActivity(), Utils.ARG_ADMOB_PREFERENCE, Utils.ARG_TRIGGER);
+                //когда значения совпадут будет отображаться межстраничный банер
+                if (interstitialTrigger == Utils.ARG_TRIGGER_VALUE) {
+                    if (Utils.IS_ADMOB_IN_DEBUG){//если режим дебаг включен загружаем тестовые банеры
+                        interstitialAdRequest = new AdRequest.Builder()
+                                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                                .addTestDevice(TEST_DEVICE_ID)//банер запрашивается в тестовом режиме
+                                .build();
+                    } else {
+                        //если режим не включен то стандартный межстраничный банер
+                        interstitialAdRequest = new AdRequest.Builder().build();
+                    }
+                    //сохраняем 1 в фаил настроек
+                    Utils.saveIntPreferences(getActivity(), Utils.ARG_ADMOB_PREFERENCE, Utils.ARG_TRIGGER, 1);
+                } else {
+                    //если значение не совпадает, в фаил настроек добавляем interstitialTrigger +1
+                    Utils.saveIntPreferences(getActivity(), Utils.ARG_ADMOB_PREFERENCE, Utils.ARG_TRIGGER,
+                            (interstitialTrigger + 1));
+                }
+            }
+            return null;
+        }
+        //вызывается после doInBackground и передает его результаты в поток ui
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (isAdmobVisible) {//проверка включения рекламы
+                ad.loadAd(adRequest);//стартуем загрузку банера
+                if (interstitialTrigger == Utils.ARG_TRIGGER_VALUE) {
+                    interstitialAd.loadAd(interstitialAdRequest);//загружаем межстраничный банер
+                    interstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(int errorCode) {
+
+                        }
+
+                        @Override
+                        public void onAdLoaded() {
+                            if (interstitialAd.isLoaded()) {//проверяем что межстраничный банер загружен
+                                interstitialAd.show();//отображаем его
+                            }
+                        }
+                    });
+                }
+            }
         }
     }
 }

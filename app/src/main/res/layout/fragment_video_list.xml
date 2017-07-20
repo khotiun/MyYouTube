@@ -56,4 +56,15 @@
         android:layout_height="match_parent">
     </com.marshalchen.ultimaterecyclerview.UltimateRecyclerView>
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        android:background="@color/window_background_color"
+        ads:adUnitId="@string/banner_ad_id"
+        android:layout_alignParentBottom="true">
+
+    </com.google.android.gms.ads.AdView>
+
 </RelativeLayout>
