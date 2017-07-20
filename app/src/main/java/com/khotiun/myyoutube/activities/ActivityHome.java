@@ -34,14 +34,17 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public final class ActivityHome extends AppCompatActivity implements YouTubePlayer.OnFullscreenListener,
         FragmentChannelVideo.OnVideoSelectedListener{
-
+    //отступ между списками в альбомной ориентации
     private static final int LANDSCAPE_VIDEO_PADDING_DP = 5;
+    //код запроса, для востановления ошибки после API
     private static final int RECOVERY_DIALOG_REQUEST = 1;
     private FragmentVideo fragmentVideo;
+    //переменная для обработки полноэкранного состояния
     private boolean isFullscreen;
 
     private Drawer drawer = null;
     private Toolbar toolbar;
+    //представляет внешний вид окна активити со всем его оформлением и содержимым
     private View decorView;
 
     private String[] channelNames;
@@ -69,7 +72,7 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
         channelNames = getResources().getStringArray(R.array.channel_names);
         channelId = getResources().getStringArray(R.array.channel_id);
         videoTypes = getResources().getStringArray(R.array.video_types);
-
+        //нужен для проверки подключения юьуб апи в случае не удачи оповещает всплывающим сообщением
         checkYouTubeApi();
         //количество items в drawer
         PrimaryDrawerItem[] primaryDrawerItems = new PrimaryDrawerItem[channelId.length];
@@ -113,10 +116,12 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
                                         channelNames[selectedDrawerItem-1],
                                         (selectedDrawerItem-1)
                                 );
-
+                                //действия при нажатии на айтем
                                 Bundle bundle = new Bundle();
+                                //ложим в бандл тип видео
                                 bundle.putString(Utils.TAG_VIDEO_TYPE,
                                         videoTypes[selectedDrawerItem-1]);
+                                //ложим в бандл id видео
                                 bundle.putString(Utils.TAG_CHANNEL_ID,
                                         channelId[selectedDrawerItem-1]);
 
@@ -126,6 +131,7 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
                                 getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, fragment)
                                         .commit();
+                            //вызов активити about
                             } else if (selectedDrawerItem == -1) {
                                 Intent aboutIntent = new Intent(getApplicationContext(),
                                         ActivityAbout.class);
@@ -142,7 +148,7 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
 
         setToolbarAndSelectedDrawerItem(channelNames[0], 0);
 
-
+        //при старте ативити сразу отображается видео и список
         Bundle bundle = new Bundle();
         bundle.putString(Utils.TAG_VIDEO_TYPE,
                 videoTypes[selectedDrawerItem]);
@@ -175,7 +181,7 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
 
     }
 
-
+    //нужен для проверки подключения юьуб апи в случае не удачи оповещает всплывающим сообщением
     private void checkYouTubeApi() {
         YouTubeInitializationResult errorReason =
                 YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(this);
@@ -188,12 +194,14 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
         }
     }
-
+    //вызывается при смене фрагментов
     private void setToolbarAndSelectedDrawerItem(String title, int selectedDrawerItem){
+        //устанавливает заголовок окна
         toolbar.setTitle(title);
+        //устанавливает выбранный тип меню
         drawer.setSelection(selectedDrawerItem, false);
     }
-
+    //обновляет выбранный заголовок меню и выбранный пункт меню
     private void updateTitleAndDrawer (Fragment mFragment){
         String fragClassName = mFragment.getClass().getName();
 
@@ -202,13 +210,13 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
                     (selectedDrawerItem ));
         }
     }
-
+    //создает меню доступное через 3 точки в тулбаре
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_home, menu);
         return true;
     }
-
+    //обрабатывает нажатие пунктов меню
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -222,31 +230,33 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    //восстанавливает активити если пользователь нажал кнопку повтора попытки подключения
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
             recreate();
         }
     }
-
+    //отслеживает такие события как поворот экрана
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        //происходит программная настройка макета для 3-х различных состояний
         layout();
     }
 
     @Override
     public void onFullscreen(boolean isFullscreen) {
         this.isFullscreen = isFullscreen;
+        //происходит программная настройка макета для 3-х различных состояний
         layout();
     }
 
-
+    //происходит программная настройка макета для 3-х различных состояний
     private void layout() {
         boolean isPortrait =
                 getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-
+        //осуществляется быстрый переход между состояниями поэтому xml ресурсы не перезагружаем
         if (isFullscreen) {
 
             toolbar.setVisibility(View.GONE);
@@ -271,18 +281,18 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
             setLayoutSize(fragmentVideo.getView(), videoWidth, WRAP_CONTENT);
         }
     }
-
+    //создает фрагмент для отображения видео и передает ему id видео
     @Override
     public void onVideoSelected(String ID) {
         FragmentVideo fragmentVideo =
                 (FragmentVideo) getFragmentManager().findFragmentById(R.id.video_fragment_container);
         fragmentVideo.setVideoId(ID);
     }
-
+    //метод для преобразования dp в px
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
     }
-
+    //метод установки размера макета
     private static void setLayoutSize(View view, int width, int height) {
         ViewGroup.LayoutParams params = view.getLayoutParams();
         params.width = width;
@@ -292,6 +302,7 @@ public final class ActivityHome extends AppCompatActivity implements YouTubePlay
 
     @Override
     public void onBackPressed() {
+        //если полноэкранный режим возвращает в обычный
         if (isFullscreen){
             fragmentVideo.backnormal();
         } else{

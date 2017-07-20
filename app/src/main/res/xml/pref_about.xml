@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.lb.material_preferences_library.custom_preferences.Preference

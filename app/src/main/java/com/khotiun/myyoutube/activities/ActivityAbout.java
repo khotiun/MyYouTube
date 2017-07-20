@@ -3,10 +3,12 @@ package com.khotiun.myyoutube.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+
+import com.lb.material_preferences_library.PreferenceActivity;
+import com.lb.material_preferences_library.custom_preferences.Preference;
 
 import com.khotiun.myyoutube.R;
-import com.lb.material_preferences_library.custom_preferences.Preference;
+
 
 /**
  * Created by hotun on 18.07.2017.
@@ -29,7 +31,9 @@ public class ActivityAbout extends PreferenceActivity
         prefRateReviewKey.setOnPreferenceClickListener(this);
     }
     //соединяем преференс активити с преференс xml
-//    @Override
+
+
+    @Override
     protected int getPreferencesXmlId()
     {
         return R.xml.pref_about;
